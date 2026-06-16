@@ -45,7 +45,7 @@ class UploadController extends Controller
 
         return response()->json([
             'name' => $file->getClientOriginalName(),
-            'url'  => asset('storage/' . $path),
+            'url'  => \Storage::disk('public')->url($path),
             'size' => $file->getSize(),
             'path' => $path,
         ]);
@@ -64,7 +64,7 @@ class UploadController extends Controller
 
         return response()->json([
             'name' => $file->getClientOriginalName(),
-            'url'  => asset('storage/' . $path),
+            'url'  => \Storage::disk('public')->url($path),
             'size' => $file->getSize(),
             'path' => $path,
         ]);
@@ -111,7 +111,7 @@ class UploadController extends Controller
         $path     = $file->storeAs('uploads/' . $this->companyPrefix() . 'images', $filename, 'public');
 
         return response()->json([
-            'url'  => asset('storage/' . $path),
+            'url'  => \Storage::disk('public')->url($path),
             'path' => $path,
         ]);
     }
