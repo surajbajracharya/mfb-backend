@@ -27,17 +27,20 @@ generate_env() {
 
 generate_env
 
-php artisan config:clear
-php artisan cache:clear
-php artisan route:clear
-php artisan view:clear
+# Clear caches (non-fatal — continue even if these fail)
+php artisan config:clear  || true
+php artisan cache:clear   || true
+php artisan route:clear   || true
+php artisan view:clear    || true
 
 php artisan storage:link --force 2>/dev/null || true
 
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
+# Rebuild caches (non-fatal — app still works without cached config)
+php artisan config:cache  || true
+php artisan route:cache   || true
+php artisan view:cache    || true
 
+# Run migrations (fatal if DB is unreachable — container should restart)
 php artisan migrate --force
 
 mkdir -p /var/log/supervisor
