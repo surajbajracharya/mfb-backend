@@ -37,9 +37,23 @@ php artisan view:clear    2>/dev/null || true
 
 php artisan storage:link --force 2>/dev/null || true
 
+# Ensure upload directories exist and are writable by www-data
+mkdir -p /var/www/html/storage/app/public/uploads/images \
+         /var/www/html/storage/app/public/uploads/avatars \
+         /var/www/html/storage/app/public/uploads/audio \
+         /var/www/html/storage/app/public/uploads/pdfs \
+         /var/www/html/storage/app/public/uploads/company_1/images \
+         /var/www/html/storage/app/public/uploads/company_1/audio \
+         /var/www/html/storage/app/public/uploads/company_2/images \
+         /var/www/html/storage/app/public/uploads/company_3/images \
+         /var/www/html/storage/app/public/identity-proofs
+chown -R www-data:www-data /var/www/html/storage/app/public
+chmod -R 775 /var/www/html/storage/app/public
+
 # Seed uploads into the volume on first deploy (volume starts empty)
 if [ ! -f /var/www/html/storage/app/public/.seeded ]; then
   cp -r /var/www/html/storage-seed/. /var/www/html/storage/app/public/ 2>/dev/null || true
+  chown -R www-data:www-data /var/www/html/storage/app/public
   touch /var/www/html/storage/app/public/.seeded
 fi
 
