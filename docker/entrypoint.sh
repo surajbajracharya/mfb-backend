@@ -18,7 +18,7 @@ generate_env() {
   ; do
     val=$(printenv "$var" 2>/dev/null || true)
     if [ -n "$val" ]; then
-      echo "${var}=${val}" >> .env
+      echo "${var}=\"${val}\"" >> .env
     fi
   done
 }
