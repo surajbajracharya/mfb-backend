@@ -25,6 +25,11 @@ generate_env() {
 
 generate_env
 
+# Auto-derive STORAGE_URL from APP_URL if not explicitly set
+if [ -z "$(printenv STORAGE_URL 2>/dev/null)" ] && [ -n "$(printenv APP_URL 2>/dev/null)" ]; then
+  echo "STORAGE_URL=\"$(printenv APP_URL)/storage\"" >> .env
+fi
+
 php artisan config:clear  2>/dev/null || true
 php artisan cache:clear   2>/dev/null || true
 php artisan route:clear   2>/dev/null || true
