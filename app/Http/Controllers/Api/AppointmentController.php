@@ -70,18 +70,13 @@ class AppointmentController extends Controller
         $shortcodes = [
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
-            '{appointment_type}'     => $type->title,
-            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
+            '{appointment_title}'     => $type->title,
+            '{appointment_date}' => Carbon::parse($appt->scheduled_at)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
             '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
             '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
         ];
 
-        if (!$type->price || $type->price == 0) {
-            // appointment_confirmed email disabled — admin will send manually with meeting link
-        } else {
-            // Paid appointment — booking received, awaiting confirmation after payment
-            EmailService::send($request->user()->email, 'appointment_booked_pending', $shortcodes);
-        }
+        EmailService::send($request->user()->email, 'appointment_booked_pending', $shortcodes);
 
         return response()->json($appt->load("type"), 201);
     }
@@ -98,8 +93,8 @@ class AppointmentController extends Controller
         EmailService::send($request->user()->email, 'appointment_cancelled', [
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
-            '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
+            '{appointment_title}'     => $appt->type?->title ?? 'Appointment',
+            '{appointment_date}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
             '{cancellation_reason}'  => $reason,
             '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
             '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
@@ -122,8 +117,8 @@ class AppointmentController extends Controller
             EmailService::send($appt->user->email, 'appointment_cancelled', [
                 '{username}'             => $appt->user->name,
                 '{email}'                => $appt->user->email,
-                '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-                '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
+                '{appointment_title}'     => $appt->type?->title ?? 'Appointment',
+                '{appointment_date}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
                 '{cancellation_reason}'  => $reason,
                 '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
                 '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
@@ -257,8 +252,8 @@ class AppointmentController extends Controller
             $shortcodes = [
                 '{username}'             => $appt->user->name,
                 '{email}'                => $appt->user->email,
-                '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-                '{appointment_datetime}' => $datetimeFmt,
+                '{appointment_title}'     => $appt->type?->title ?? 'Appointment',
+                '{appointment_date}' => $datetimeFmt,
                 '{cancellation_reason}'  => $appt->cancellation_reason ?? 'Cancelled by admin',
                 '{dashboard_url}'        => $dashboardUrl,
                 '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
@@ -276,8 +271,8 @@ class AppointmentController extends Controller
                 EmailService::send($appt->user->email, 'appointment_rescheduled', [
                     '{username}'             => $appt->user->name,
                     '{email}'                => $appt->user->email,
-                    '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-                    '{appointment_datetime}' => $datetimeFmt,
+                    '{appointment_title}'     => $appt->type?->title ?? 'Appointment',
+                    '{appointment_date}' => $datetimeFmt,
                     '{dashboard_url}'        => $dashboardUrl,
                     '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
                 ]);
@@ -325,9 +320,9 @@ class AppointmentController extends Controller
             $shortcodes = [
                 '{username}'             => $appt->user->name,
                 '{email}'                => $appt->user->email,
-                '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
+                '{appointment_title}'     => $appt->type?->title ?? 'Appointment',
                 '{appointment_title}'    => $appt->type?->title ?? 'Appointment',
-                '{appointment_datetime}' => $datetimeFmt,
+                '{appointment_date}' => $datetimeFmt,
                 '{appointment_date}'     => $datetimeFmt,
                 '{meeting_link}'         => $meetLinkHtml,
                 '{add_to_calendar}'      => $addToCalendarHtml,
