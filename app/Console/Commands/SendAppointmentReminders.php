@@ -41,11 +41,11 @@ class SendAppointmentReminders extends Command
             $tz = $appt->timezone ?? config('app.timezone');
 
             EmailService::send($appt->user->email, 'appointment_reminder', [
-                '{username}'             => $appt->user->name,
-                '{email}'                => $appt->user->email,
-                '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-                '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A'),
-                '{site_name}'            => config('app.name'),
+                '{username}'          => $appt->user->name,
+                '{email}'             => $appt->user->email,
+                '{appointment_title}' => $appt->type?->title ?? 'Appointment',
+                '{appointment_date}'  => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
+                '{site_name}'         => config('app.name'),
             ]);
 
             $appt->update(['reminder_sent_at' => now()]);
