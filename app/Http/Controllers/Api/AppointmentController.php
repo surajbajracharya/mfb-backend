@@ -71,7 +71,7 @@ class AppointmentController extends Controller
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
             '{appointment_type}'     => $type->title,
-            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->format('D, M j Y \a\t g:i A T'),
+            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
             '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
             '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
         ];
@@ -99,7 +99,7 @@ class AppointmentController extends Controller
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
             '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T'),
+            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
             '{cancellation_reason}'  => $reason,
             '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
             '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
@@ -123,7 +123,7 @@ class AppointmentController extends Controller
                 '{username}'             => $appt->user->name,
                 '{email}'                => $appt->user->email,
                 '{appointment_type}'     => $appt->type?->title ?? 'Appointment',
-                '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T'),
+                '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time',
                 '{cancellation_reason}'  => $reason,
                 '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
                 '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
@@ -249,7 +249,7 @@ class AppointmentController extends Controller
 
         $newStatus    = $appt->status;
         $tz           = $appt->timezone ?? 'Australia/Sydney';
-        $datetimeFmt  = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
+        $datetimeFmt  = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time';
         $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
 
         // Status-change emails
@@ -304,7 +304,7 @@ class AppointmentController extends Controller
 
         if ($appt->user) {
             $tz           = $appt->timezone ?? 'Australia/Sydney';
-            $datetimeFmt  = \Carbon\Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
+            $datetimeFmt  = \Carbon\Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time';
             $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
             $adminUrl     = rtrim(config('app.admin_url', config('app.frontend_url', url('/'))), '/');
 
@@ -480,7 +480,7 @@ class AppointmentController extends Controller
         }
 
         $tz          = $appt->timezone ?? 'Australia/Sydney';
-        $datetimeFmt = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
+        $datetimeFmt = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A') . ' Australia/Sydney Time';
         $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
         $adminUrl     = rtrim(config('app.admin_url', config('app.frontend_url', url('/'))), '/');
 
