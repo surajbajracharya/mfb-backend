@@ -59,7 +59,7 @@ for i in $(seq 1 30); do
 done
 
 if [ "$DB_READY" = "1" ]; then
-  php artisan migrate --force
+  php artisan migrate --force || echo "WARNING: Migration failed - app will start but DB may not be initialized."
 else
   echo "WARNING: Database unreachable after 60s - skipping migration. Check DB_HOST/DB_PORT in Coolify env vars."
 fi
