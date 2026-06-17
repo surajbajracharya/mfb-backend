@@ -55,7 +55,7 @@ class AppointmentController extends Controller
             "status" => "pending",
             "consent_data" => $data["consent_data"] ?? null,
             "consented_at" => $data["consented_at"] ?? null,
-            "timezone" => \App\Models\Setting::getValue('timezone') ?? config('app.timezone'),
+            "timezone" => 'Australia/Sydney',
         ]);
 
         // Generate consent PDF if consent data is present
@@ -66,12 +66,12 @@ class AppointmentController extends Controller
             }
         }
 
-        $tz = $appt->timezone ?? config('app.timezone');
+        $tz = $appt->timezone ?? 'Australia/Sydney';
         $shortcodes = [
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
             '{appointment_type}'     => $type->title,
-            '{appointment_datetime}' => Carbon::parse($data['scheduled_at'])->setTimezone($tz)->format('D, M j Y \a\t g:i A T'),
+            '{appointment_datetime}' => Carbon::parse($appt->scheduled_at)->format('D, M j Y \a\t g:i A T'),
             '{dashboard_url}'        => rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard',
             '{site_name}'            => \App\Models\Setting::getValue('site_name') ?? config('app.name'),
         ];
@@ -94,7 +94,7 @@ class AppointmentController extends Controller
         $reason = $request->reason ?? 'User requested cancellation';
         $appt->update(["status" => "cancelled", "cancellation_reason" => $reason]);
 
-        $tz = $appt->timezone ?? config('app.timezone');
+        $tz = $appt->timezone ?? 'Australia/Sydney';
         EmailService::send($request->user()->email, 'appointment_cancelled', [
             '{username}'             => $request->user()->name,
             '{email}'                => $request->user()->email,
@@ -118,7 +118,7 @@ class AppointmentController extends Controller
         $appt->update(['status' => 'cancelled', 'cancellation_reason' => $reason]);
 
         if ($appt->user) {
-            $tz = $appt->timezone ?? config('app.timezone');
+            $tz = $appt->timezone ?? 'Australia/Sydney';
             EmailService::send($appt->user->email, 'appointment_cancelled', [
                 '{username}'             => $appt->user->name,
                 '{email}'                => $appt->user->email,
@@ -161,6 +161,8 @@ class AppointmentController extends Controller
             return response()->json(['data' => []]);
         }
 
+        $tz = \App\Models\Setting::getValue('timezone') ?? 'Australia/Sydney';
+
         // Load existing appointments on this date (not cancelled/no_show).
         // scheduled_at is stored UTC; give a ±1 day buffer so timezone shifts never miss a conflict.
         $existing = Appointment::withoutCompanyScope()
@@ -170,13 +172,13 @@ class AppointmentController extends Controller
             })
             ->with('type')
             ->whereBetween('scheduled_at', [
-                Carbon::parse($date)->subDay()->toDateTimeString(),
-                Carbon::parse($date)->addDay()->toDateTimeString(),
+                Carbon::parse($date . ' 00:00:00', $tz)->utc()->toDateTimeString(),
+                Carbon::parse($date . ' 23:59:59', $tz)->utc()->toDateTimeString(),
             ])
             ->whereNotIn('status', ['cancelled', 'no_show'])
             ->get()
-            ->map(function ($appt) {
-                $start     = Carbon::parse($appt->scheduled_at);
+            ->map(function ($appt) use ($tz) {
+                $start     = Carbon::parse($appt->scheduled_at)->setTimezone($tz);
                 $typeBreak = $appt->type?->break_minutes ?? 0;
                 return [
                     'start' => $start,
@@ -187,8 +189,8 @@ class AppointmentController extends Controller
         $available = [];
 
         foreach ($windows as $window) {
-            $winEnd = Carbon::parse($date . ' ' . $window->end_time);
-            $cursor = Carbon::parse($date . ' ' . $window->start_time);
+            $winEnd = Carbon::parse($date . ' ' . $window->end_time, $tz);
+            $cursor = Carbon::parse($date . ' ' . $window->start_time, $tz);
 
             while (true) {
                 $sessionEnd   = $cursor->copy()->addMinutes($dur);
@@ -246,7 +248,7 @@ class AppointmentController extends Controller
         $appt->load(["user", "type"]);
 
         $newStatus    = $appt->status;
-        $tz           = $appt->timezone ?? config('app.timezone');
+        $tz           = $appt->timezone ?? 'Australia/Sydney';
         $datetimeFmt  = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
         $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
 
@@ -301,7 +303,7 @@ class AppointmentController extends Controller
         $appt->update(["status" => "confirmed", "meeting_link" => $meetLink]);
 
         if ($appt->user) {
-            $tz           = $appt->timezone ?? config('app.timezone');
+            $tz           = $appt->timezone ?? 'Australia/Sydney';
             $datetimeFmt  = \Carbon\Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
             $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
             $adminUrl     = rtrim(config('app.admin_url', config('app.frontend_url', url('/'))), '/');
@@ -456,7 +458,7 @@ class AppointmentController extends Controller
             'consent_data'        => $data['consent_data'] ?? null,
             'consented_at'        => $data['consented_at'] ?? null,
             'company_id'          => $type->company_id,
-            'timezone'            => \App\Models\Setting::getValue('timezone') ?? config('app.timezone'),
+            'timezone'            => 'Australia/Sydney',
         ]);
 
         // Update order_item meta so admin can see the schedule
@@ -477,8 +479,8 @@ class AppointmentController extends Controller
             \Illuminate\Support\Facades\Log::warning('Google Meet link creation failed: ' . $e->getMessage());
         }
 
-        $tz          = $appt->timezone ?? config('app.timezone');
-        $datetimeFmt = Carbon::parse($data['scheduled_at'])->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
+        $tz          = $appt->timezone ?? 'Australia/Sydney';
+        $datetimeFmt = Carbon::parse($appt->scheduled_at)->setTimezone($tz)->format('D, M j Y \a\t g:i A T');
         $dashboardUrl = rtrim(config('app.frontend_url', url('/')), '/') . '/dashboard';
         $adminUrl     = rtrim(config('app.admin_url', config('app.frontend_url', url('/'))), '/');
 
@@ -567,7 +569,7 @@ class AppointmentController extends Controller
                 'userName'        => $user->name,
                 'userEmail'       => $user->email,
                 'appointmentType' => $type->title,
-                'scheduledAt'     => Carbon::parse($appt->scheduled_at)->setTimezone($appt->timezone ?? config('app.timezone'))->format('l, F j Y \a\t g:i A'),
+                'scheduledAt'     => Carbon::parse($appt->scheduled_at)->setTimezone($appt->timezone ?? 'Australia/Sydney')->format('l, F j Y \a\t g:i A'),
                 'disclaimer'      => $disclaimer,
                 'fields'          => $fieldData,
                 'consentedAt'     => $appt->consented_at
