@@ -37,6 +37,12 @@ php artisan view:clear    2>/dev/null || true
 
 php artisan storage:link --force 2>/dev/null || true
 
+# Seed uploads into the volume on first deploy (volume starts empty)
+if [ ! -f /var/www/html/storage/app/public/.seeded ]; then
+  cp -r /var/www/html/storage-seed/. /var/www/html/storage/app/public/ 2>/dev/null || true
+  touch /var/www/html/storage/app/public/.seeded
+fi
+
 php artisan config:cache  2>/dev/null || true
 php artisan route:cache   2>/dev/null || true
 php artisan view:cache    2>/dev/null || true
