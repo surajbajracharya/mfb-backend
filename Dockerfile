@@ -25,8 +25,6 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN composer install --optimize-autoloader --no-dev --no-interaction
-
 RUN mkdir -p storage/framework/sessions \
     storage/framework/views \
     storage/framework/cache/data \
@@ -34,6 +32,8 @@ RUN mkdir -p storage/framework/sessions \
     bootstrap/cache \
     && chown -R www-data:www-data storage bootstrap/cache \
     && chmod -R 775 storage bootstrap/cache
+
+RUN composer install --optimize-autoloader --no-dev --no-interaction
 
 COPY docker/nginx.conf /etc/nginx/nginx.conf
 COPY docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
