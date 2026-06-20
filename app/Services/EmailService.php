@@ -212,9 +212,8 @@ class EmailService
         $host       = static::smtpSetting('mail_host');
         $encryption = strtolower((string) static::smtpSetting('mail_encryption', 'tls'));
         $scheme     = match ($encryption) {
-            'ssl'   => 'smtps',
-            'tls'   => 'tls',
-            default => null,
+            'ssl'  => 'smtps',
+            default => 'smtp',
         };
 
         $fromAddress = static::smtpSetting('mail_from_address')
