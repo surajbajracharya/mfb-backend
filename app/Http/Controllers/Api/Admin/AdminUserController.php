@@ -586,4 +586,5 @@ class AdminUserController extends Controller
             'errors'   => $errors,
         ]);
     }
+
 }

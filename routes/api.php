@@ -577,7 +577,7 @@ Route::prefix('v1')->middleware(['tenant', 'company_timezone'])->group(function 
             Route::middleware('permission:edit users')->group(function () {
                 Route::put('users/{user}',                                       [AdminUserController::class, 'update']);
                 Route::post('users/{id}/restore',                                [AdminUserController::class, 'restore']);
-                Route::post('users/{id}/send-verification',                      [IdentityVerificationController::class, 'sendLink']);
+                Route::post('users/{id}/send-verification',                      [AdminUserController::class, 'resendEmailVerification']);
                 Route::post('users/{id}/approve-verification',                   [IdentityVerificationController::class, 'adminApprove']);
                 Route::post('users/{id}/revoke-verification',                    [IdentityVerificationController::class, 'adminRevoke']);
                 Route::post('users/{userId}/plan-subscriptions/{subId}/extend',  [AdminUserController::class, 'extendSubscription']);
