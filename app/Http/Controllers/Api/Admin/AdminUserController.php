@@ -195,13 +195,13 @@ class AdminUserController extends Controller
         $wasActive        = !is_null($user->email_verified_at);
         $plainPassword    = !empty($data['password']) ? $data['password'] : null;
 
-        if (isset($data["role"]) && $request->user()->hasRole('super_admin')) {
+        if (isset($data["role"]) && $request->user()->hasAnyRole(['super_admin', 'admin'])) {
             $user->syncRoles([$data["role"]]);
         }
 
         $activating   = false;
         $deactivating = false;
-        if (array_key_exists("active", $data) && $request->user()->hasRole('super_admin')) {
+        if (array_key_exists("active", $data) && $request->user()->hasAnyRole(['super_admin', 'admin'])) {
             $nowActive = (bool) $data["active"];
             $user->email_verified_at = $nowActive ? now() : null;
             $activating   = !$wasActive && $nowActive;
