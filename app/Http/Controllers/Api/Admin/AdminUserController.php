@@ -169,7 +169,7 @@ class AdminUserController extends Controller
             '{email}'         => $user->email,
             '{temp_password}' => $plainPassword,
             '{login_url}'     => $adminUrl . '/admin/login',
-            '{site_name}'     => AppModelsSetting::getValue('site_name', config('app.name')),
+            '{site_name}'     => Setting::getValue('site_name', config('app.name')),
         ]);
 
         return response()->json($user->load("roles"), 201);
@@ -232,7 +232,7 @@ class AdminUserController extends Controller
             EmailService::send($user->email, 'password_changed', [
                 '{username}'  => $user->name,
                 '{email}'     => $user->email,
-                '{site_name}' => AppModelsSetting::getValue('site_name', config('app.name')),
+                '{site_name}' => Setting::getValue('site_name', config('app.name')),
             ]);
         }
 
@@ -242,7 +242,7 @@ class AdminUserController extends Controller
                 '{username}'      => $user->name,
                 '{email}'         => $user->email,
                 '{dashboard_url}' => $frontendUrl . '/dashboard',
-                '{site_name}'     => AppModelsSetting::getValue('site_name', config('app.name')),
+                '{site_name}'     => Setting::getValue('site_name', config('app.name')),
             ]);
         }
 
@@ -252,7 +252,7 @@ class AdminUserController extends Controller
             EmailService::send($user->email, 'account_deactivated', [
                 '{username}'  => $user->name,
                 '{email}'     => $user->email,
-                '{site_name}' => AppModelsSetting::getValue('site_name', config('app.name')),
+                '{site_name}' => Setting::getValue('site_name', config('app.name')),
             ]);
         }
 
