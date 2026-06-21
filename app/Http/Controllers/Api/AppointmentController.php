@@ -191,6 +191,7 @@ class AppointmentController extends Controller
             });
 
         $available = [];
+        $cutoff = Carbon::now($tz)->addHours(2);
 
         foreach ($windows as $window) {
             $winEnd = Carbon::parse($date . ' ' . $window->end_time, $tz);
@@ -203,6 +204,12 @@ class AppointmentController extends Controller
                 // Session must fit within the window
                 if ($sessionEnd->gt($winEnd)) {
                     break;
+                }
+
+                // Skip slots within 2 hours of now
+                if ($cursor->lt($cutoff)) {
+                    $cursor->addMinutes($block);
+                    continue;
                 }
 
                 // Check overlap with any existing appointment (using their duration + break)
