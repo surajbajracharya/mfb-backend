@@ -78,6 +78,16 @@ class AppointmentController extends Controller
 
         EmailService::send($request->user()->email, 'appointment_booked_pending', $shortcodes);
 
+        // Sync contact to GetResponse list if configured on this appointment type
+        if (!empty($type->getresponse_api_key) && !empty($type->getresponse_list_id)) {
+            \App\Services\GetResponseService::addContact(
+                $request->user()->email,
+                $request->user()->name,
+                $type->getresponse_api_key,
+                $type->getresponse_list_id,
+            );
+        }
+
         return response()->json($appt->load("type"), 201);
     }
     public function cancel(Request $request, string $id): JsonResponse

@@ -61,6 +61,8 @@ class AppointmentTypeController extends Controller
             "mandatory_fields"              => ["sometimes", "nullable", "array"],
             "mandatory_fields.*.show"       => ["sometimes", "boolean"],
             "mandatory_fields.*.required"   => ["sometimes", "boolean"],
+            "getresponse_api_key"           => ["sometimes", "nullable", "string", "max:255"],
+            "getresponse_list_id"           => ["sometimes", "nullable", "string", "max:50"],
         ]);
         if (empty($data['slug'])) {
             $base = Str::slug($data['title']);
@@ -103,6 +105,8 @@ class AppointmentTypeController extends Controller
             "mandatory_fields"              => ["sometimes", "nullable", "array"],
             "mandatory_fields.*.show"       => ["sometimes", "boolean"],
             "mandatory_fields.*.required"   => ["sometimes", "boolean"],
+            "getresponse_api_key"           => ["sometimes", "nullable", "string", "max:255"],
+            "getresponse_list_id"           => ["sometimes", "nullable", "string", "max:50"],
         ]);
         // Auto-generate slug from new title if title changed and no slug provided
         if (isset($validated['title']) && !isset($validated['slug'])) {
