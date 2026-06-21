@@ -58,8 +58,9 @@ class AppointmentTypeController extends Controller
             "images.*"            => ["string"],
             "is_active"           => ["sometimes", "boolean"],
             "consent_template_id" => ["nullable", "exists:consent_templates,id"],
-            "mandatory_fields"    => ["sometimes", "nullable", "array"],
-            "mandatory_fields.*"  => ["string", "in:phone,date_of_birth,time_of_birth,place_of_birth"],
+            "mandatory_fields"              => ["sometimes", "nullable", "array"],
+            "mandatory_fields.*.show"       => ["sometimes", "boolean"],
+            "mandatory_fields.*.required"   => ["sometimes", "boolean"],
         ]);
         if (empty($data['slug'])) {
             $base = Str::slug($data['title']);
@@ -99,8 +100,9 @@ class AppointmentTypeController extends Controller
             "images.*"            => ["string"],
             "is_active"           => ["sometimes", "boolean"],
             "consent_template_id" => ["nullable", "exists:consent_templates,id"],
-            "mandatory_fields"    => ["sometimes", "nullable", "array"],
-            "mandatory_fields.*"  => ["string", "in:phone,date_of_birth,time_of_birth,place_of_birth"],
+            "mandatory_fields"              => ["sometimes", "nullable", "array"],
+            "mandatory_fields.*.show"       => ["sometimes", "boolean"],
+            "mandatory_fields.*.required"   => ["sometimes", "boolean"],
         ]);
         // Auto-generate slug from new title if title changed and no slug provided
         if (isset($validated['title']) && !isset($validated['slug'])) {
