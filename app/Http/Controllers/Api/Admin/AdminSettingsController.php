@@ -79,6 +79,8 @@ class AdminSettingsController extends Controller
         'seo_appointments_keywords','seo_appointments_canonical_url','seo_appointments_robots','seo_appointments_schema_markup',
         // Google Meet integration
         'google_service_account_json','google_calendar_id',
+        // GetResponse integration
+        'getresponse_api_key',
     ];
 
     private const SECRET_KEYS = [
@@ -86,6 +88,7 @@ class AdminSettingsController extends Controller
         'pg_stripe_secret',
         'pg_stripe_webhook_secret',
         'pg_paypal_client_secret',
+        'getresponse_api_key',
     ];
 
     private function maskedSettings(): array
