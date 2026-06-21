@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -11,11 +12,13 @@ class GetResponseService
 
     /**
      * Add a contact to a GetResponse list.
-     * Uses the API key and list ID stored on the appointment type.
+     * API key is read from the global settings table (getresponse_api_key).
      * Silently logs on failure — never throws, so a failed sync never breaks a booking.
      */
-    public static function addContact(string $email, string $name, string $apiKey, string $listId): void
+    public static function addContact(string $email, string $name, string $listId): void
     {
+        $apiKey = Setting::withoutGlobalScope('company')->where('key', 'getresponse_api_key')->whereNotNull('value')->value('value');
+
         if (!$apiKey || !$listId) {
             return;
         }
