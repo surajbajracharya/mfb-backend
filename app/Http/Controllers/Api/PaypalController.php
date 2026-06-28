@@ -136,7 +136,7 @@ class PaypalController extends Controller
             'name'       => $i['name'],
             'quantity'   => (string) $i['qty'],
             'unit_amount' => [
-                'currency_code' => 'USD',
+                'currency_code' => 'AUD',
                 'value'         => number_format((float) $i['price'], 2, '.', ''),
             ],
         ])->values()->toArray();
@@ -149,11 +149,11 @@ class PaypalController extends Controller
                     'description'   => 'Order #' . $order->order_number,
                     'items'         => $ppItems,
                     'amount'        => [
-                        'currency_code' => 'USD',
+                        'currency_code' => 'AUD',
                         'value'         => number_format($subtotal, 2, '.', ''),
                         'breakdown'     => [
                             'item_total' => [
-                                'currency_code' => 'USD',
+                                'currency_code' => 'AUD',
                                 'value'         => number_format($subtotal, 2, '.', ''),
                             ],
                         ],

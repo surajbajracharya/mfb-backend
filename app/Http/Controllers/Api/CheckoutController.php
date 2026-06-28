@@ -59,7 +59,7 @@ class CheckoutController extends Controller
                 }
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'usd',
+                        'currency'     => 'aud',
                         'product_data' => ['name' => $course->title],
                         'unit_amount'  => (int) ($course->price * 100),
                     ],
@@ -73,7 +73,7 @@ class CheckoutController extends Controller
                 }
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'usd',
+                        'currency'     => 'aud',
                         'product_data' => ['name' => $event->title . ' - Ticket'],
                         'unit_amount'  => (int) ($event->price * 100),
                     ],
@@ -87,7 +87,7 @@ class CheckoutController extends Controller
                 }
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'usd',
+                        'currency'     => 'aud',
                         'product_data' => ['name' => $resource->title],
                         'unit_amount'  => (int) ($resource->price * 100),
                     ],
@@ -101,7 +101,7 @@ class CheckoutController extends Controller
                 }
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'usd',
+                        'currency'     => 'aud',
                         'product_data' => ['name' => $type->title],
                         'unit_amount'  => (int) ($type->price * 100),
                     ],
@@ -121,7 +121,7 @@ class CheckoutController extends Controller
                 }
                 $lineItems[] = [
                     'price_data' => [
-                        'currency'     => 'usd',
+                        'currency'     => 'aud',
                         'product_data' => ['name' => $plan->name],
                         'unit_amount'  => (int) ($plan->price * 100),
                     ],
@@ -440,7 +440,7 @@ class CheckoutController extends Controller
 
         $paymentIntent = $this->getStripe()->paymentIntents->create([
             'amount'                    => (int) ($total * 100),
-            'currency'                  => 'usd',
+            'currency'                  => 'aud',
             'receipt_email'             => $user->email,
             'metadata'                  => ['order_id' => $order->id, 'user_id' => $user->id],
             'automatic_payment_methods' => ['enabled' => true],
